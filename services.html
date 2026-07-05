@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -322,15 +322,14 @@
             align-self: flex-start;
         }
 
-        /* ====== MOBILE RESPONSIVE ====== */
+        /* ====== TABLET RESPONSIVE (max 900px) ====== */
         @media (max-width: 900px) {
             :root { 
-                /* Much smaller cards for mobile */
-                --card-width: 180px; 
-                --card-height: 260px; 
+                --card-width: 160px; 
+                --card-height: 230px; 
             }
             .header { top: 20px; }
-            .header-title { font-size: 22px; }
+            .header-title { font-size: 24px; }
             
             /* Mobile Overlay Layout */
             .spread-overlay { flex-direction: column; overflow-y: auto; touch-action: auto; }
@@ -349,6 +348,17 @@
                 top: 15px; right: 15px; 
                 background: rgba(0,0,0,0.6); border: none; 
             }
+        }
+
+        /* ====== MOBILE RESPONSIVE (max 600px) ====== */
+        @media (max-width: 600px) {
+            :root { 
+                --card-width: 130px; 
+                --card-height: 180px; 
+            }
+            .header-title { font-size: 20px; }
+            /* Scale down the entire carousel to fit exactly on narrow screens without side crop */
+            .scene { transform: translate(-50%, -45%) scale(0.85); }
         }
     </style>
 </head>
@@ -469,7 +479,10 @@
         // Calculate radius based on CSS variable to adapt to mobile
         function getRadius() {
             const cw = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--card-width'));
-            return Math.round((cw / 2) / Math.tan(Math.PI / numItems)) + (window.innerWidth < 900 ? 30 : 60);
+            let padding = 60;
+            if (window.innerWidth <= 600) padding = 20;
+            else if (window.innerWidth <= 900) padding = 30;
+            return Math.round((cw / 2) / Math.tan(Math.PI / numItems)) + padding;
         }
 
         // Build Carousel
@@ -518,7 +531,7 @@
         let isDragging = false;
         let startX = 0;
         let startAngle = 0;
-        let autoRotateSpeed = -0.1; 
+        let autoRotateSpeed = -0.15; 
         
         function animate() {
             if (!isDragging && !overlay.classList.contains('active')) {
@@ -602,3 +615,4 @@
     </script>
 </body>
 </html>
+
