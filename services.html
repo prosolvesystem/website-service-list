@@ -105,6 +105,7 @@
             width: var(--card-width);
             height: var(--card-height);
             transform-style: preserve-3d;
+            will-change: transform;
             cursor: grab;
             /* Animation handled by JS for drag support */
         }
@@ -122,6 +123,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
             transition: box-shadow 0.3s;
             -webkit-box-reflect: below 15px linear-gradient(transparent, transparent, rgba(0,0,0,0.2));
+            will-change: transform;
             user-select: none; /* Prevent text selection while dragging */
         }
 
@@ -324,6 +326,8 @@
 
         /* ====== TABLET RESPONSIVE (max 900px) ====== */
         @media (max-width: 900px) {
+            .card { -webkit-box-reflect: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+
             :root { 
                 --card-width: 160px; 
                 --card-height: 230px; 
@@ -531,7 +535,7 @@
         let isDragging = false;
         let startX = 0;
         let startAngle = 0;
-        let autoRotateSpeed = -0.15; 
+        let autoRotateSpeed = -0.4; 
         
         function animate() {
             if (!isDragging && !overlay.classList.contains('active')) {
