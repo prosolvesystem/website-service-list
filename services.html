@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services — PROSOLVE SYSTEMS</title>
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <style>
+        /* ====== RESET ====== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #030303;
+            --gold: #F19A5C;
+            --white: #ffffff;
+            --white-70: rgba(255,255,255,0.7);
+            --white-40: rgba(255,255,255,0.4);
+            /* Made cards shorter so they don't hit the heading */
+            --card-width: 240px;
+            --card-height: 320px; 
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden; 
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--white);
+            touch-action: none; /* Prevent browser scrolling to allow custom drag */
+        }
+
+        body::before {
+            content: '';
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw; height: 80vh;
+            background: radial-gradient(circle, rgba(241,154,92,0.05) 0%, transparent 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ====== HEADER ====== */
+        .header {
+            position: absolute;
+            top: 30px;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            pointer-events: none; 
+        }
+
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .logo img {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(241,154,92,0.2);
+        }
+
+        .logo-title {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-weight: 800;
+            font-size: 18px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .logo-title span { color: var(--gold); }
+
+        .header-title {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 28px;
+            font-weight: 300;
+            letter-spacing: -0.01em;
+        }
+
+        /* ====== 3D CAROUSEL SCENE ====== */
+        .scene {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -45%); /* Shifted down slightly away from header */
+            width: 100%; 
+            height: 80%;
+            perspective: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .carousel {
+            position: relative;
+            width: var(--card-width);
+            height: var(--card-height);
+            transform-style: preserve-3d;
+            cursor: grab;
+            /* Animation handled by JS for drag support */
+        }
+
+        .carousel:active { cursor: grabbing; }
+
+        /* ====== CAROUSEL CARDS ====== */
+        .card {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #111;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
+            transition: box-shadow 0.3s;
+            -webkit-box-reflect: below 15px linear-gradient(transparent, transparent, rgba(0,0,0,0.2));
+            user-select: none; /* Prevent text selection while dragging */
+        }
+
+        .card:hover {
+            box-shadow: 0 15px 40px rgba(241,154,92,0.3), 0 0 0 1px rgba(241,154,92,0.5);
+        }
+
+        .card-img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block; 
+            pointer-events: none; /* Prevent dragging the image itself */
+        }
+
+        .card-overlay {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            padding: 40px 20px 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            pointer-events: none;
+        }
+
+        .card-num {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .card-title-sm {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        /* ====== BOTTOM LINK ====== */
+        .bottom-link {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .bottom-link a {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 30px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--white);
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border-radius: 100px;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+
+        .bottom-link a:hover {
+            background: var(--gold);
+            color: #000;
+            border-color: var(--gold);
+        }
+
+        /* ====== SPREAD OVERLAY (FULLSCREEN) ====== */
+        .spread-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: var(--bg);
+            display: flex;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .spread-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .spread-image {
+            flex: 1;
+            position: relative;
+            height: 100%;
+        }
+
+        .spread-image img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+        
+        .spread-image::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(to right, transparent 50%, var(--bg) 100%);
+        }
+
+        .spread-content {
+            flex: 1;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 800px;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 30px; right: 30px;
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .close-btn:hover {
+            background: var(--white);
+            color: #000;
+            transform: rotate(90deg);
+        }
+
+        .s-num {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+
+        .s-title {
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-size: 36px;
+            font-weight: 300;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+
+        .s-desc {
+            font-size: 15px;
+            color: var(--white-70);
+            line-height: 1.7;
+            font-weight: 300;
+            margin-bottom: 30px;
+        }
+
+        .s-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .s-tag {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--white);
+            padding: 8px 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 100px;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .s-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 36px;
+            background: var(--gold);
+            color: #000;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border-radius: 100px;
+            text-decoration: none;
+            transition: all 0.3s;
+            align-self: flex-start;
+        }
+
+        /* ====== MOBILE RESPONSIVE ====== */
+        @media (max-width: 900px) {
+            :root { 
+                /* Much smaller cards for mobile */
+                --card-width: 180px; 
+                --card-height: 260px; 
+            }
+            .header { top: 20px; }
+            .header-title { font-size: 22px; }
+            
+            /* Mobile Overlay Layout */
+            .spread-overlay { flex-direction: column; overflow-y: auto; touch-action: auto; }
+            .spread-overlay.active { display: block; }
+            .spread-image { width: 100%; height: 40vh; flex: none; }
+            .spread-image::after { background: linear-gradient(to bottom, transparent 40%, var(--bg) 100%); }
+            
+            .spread-content { 
+                width: 100%; flex: none;
+                padding: 20px 20px 60px;
+                display: block; 
+            }
+            .s-title { font-size: 28px; }
+            .close-btn { 
+                position: fixed; 
+                top: 15px; right: 15px; 
+                background: rgba(0,0,0,0.6); border: none; 
+            }
+        }
+    </style>
+</head>
+
+<body>
+    
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo">
+            <img src="logo.jpg" alt="ProSolve Systems">
+            <div class="logo-title">PROSOLVE <span>SYSTEMS</span></div>
+        </div>
+        <h1 class="header-title">Select a Service</h1>
+    </header>
+
+    <!-- 3D CAROUSEL SCENE -->
+    <main class="scene" id="scene">
+        <div class="carousel" id="carousel">
+            <!-- Cards will be generated by JS -->
+        </div>
+    </main>
+
+    <!-- BOTTOM LINK -->
+    <div class="bottom-link">
+        <a href="https://www.prosolvesystems.com/" target="_blank">
+            Visit Main Website 
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+    </div>
+
+    <!-- SPREAD OVERLAY -->
+    <div class="spread-overlay" id="overlay">
+        <div class="spread-image">
+            <img src="" alt="" id="o-img">
+        </div>
+        <div class="spread-content">
+            <button class="close-btn" id="close-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <div class="s-num" id="o-num"></div>
+            <h2 class="s-title" id="o-title"></h2>
+            <p class="s-desc" id="o-desc"></p>
+            <div class="s-tags" id="o-tags"></div>
+            <a href="https://www.prosolvesystems.com/" class="s-cta">Start Project 
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const servicesData = [
+            {
+                id: '01',
+                title: 'Website Development',
+                image: 'img_web_dev.png',
+                desc: 'High-performance websites that look stunning, load fast, and convert visitors into customers. From corporate sites to e-commerce platforms and personalized digital wedding invitations — built to impress.',
+                tags: ['Corporate Sites', 'E-commerce', 'Landing Pages', 'Wedding Invitations']
+            },
+            {
+                id: '02',
+                title: 'Custom Software',
+                image: 'img_software.png',
+                desc: 'Custom systems designed around how your business actually operates. From inventory management to full-scale ERP — every feature is tailored to your workflows and growth.',
+                tags: ['ERP Solutions', 'CRM Systems', 'Inventory Mgmt', 'Dashboards']
+            },
+            {
+                id: '03',
+                title: 'AI Automations',
+                image: 'img_automation.png',
+                desc: 'Intelligent systems that handle repetitive work — so your team focuses on what matters. Seamlessly integrate WhatsApp, Email, and internal data processing pipelines.',
+                tags: ['Workflow Automation', 'WhatsApp Bots', 'Lead Qualification']
+            },
+            {
+                id: '04',
+                title: 'AI Voice Agents',
+                image: 'img_voice.png',
+                desc: 'Human-like AI-powered voice assistants that answer calls, book appointments, and support your customers 24/7 without needing sleep or breaks.',
+                tags: ['Call Answering', '24/7 Support', 'Automated Booking']
+            },
+            {
+                id: '05',
+                title: 'Advertisements',
+                image: 'img_ads.png',
+                desc: 'Premium video content and commercial production. From cinematic brand commercials to scroll-stopping social reels — crafted for maximum emotional impact.',
+                tags: ['Commercials', 'Social Reels', 'Corporate Video']
+            },
+            {
+                id: '06',
+                title: 'Business Development',
+                image: 'img_business.png',
+                desc: 'Strategic consulting to identify growth opportunities, optimize operations, and build systems that scale. We engineer the blueprint for your business expansion.',
+                tags: ['Growth Strategy', 'Optimization', 'Consulting']
+            },
+            {
+                id: '07',
+                title: 'Digital Marketing',
+                image: 'img_marketing.png',
+                desc: 'Complete digital marketing ecosystems — from SEO and organic traffic to paid campaigns with measurable ROI. Data-driven and optimized for real business outcomes.',
+                tags: ['SEO', 'Google/Meta Ads', 'Lead Generation']
+            },
+            {
+                id: '08',
+                title: 'Custom AI Tools',
+                image: 'img_ai_tools.png',
+                desc: 'Bespoke AI solutions built specifically for your business — trained on your proprietary data, integrated with your systems, and designed for your team\'s daily workflows.',
+                tags: ['Custom GPTs', 'Knowledge Base AI', 'Internal Assistants']
+            }
+        ];
+
+        const carousel = document.getElementById('carousel');
+        const overlay = document.getElementById('overlay');
+        const closeBtn = document.getElementById('close-btn');
+
+        // Dynamic 3D calculation
+        const numItems = servicesData.length;
+        const theta = 360 / numItems;
+        
+        // Calculate radius based on CSS variable to adapt to mobile
+        function getRadius() {
+            const cw = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--card-width'));
+            return Math.round((cw / 2) / Math.tan(Math.PI / numItems)) + (window.innerWidth < 900 ? 30 : 60);
+        }
+
+        // Build Carousel
+        function buildCarousel() {
+            carousel.innerHTML = '';
+            const radius = getRadius();
+            
+            servicesData.forEach((s, index) => {
+                const angle = theta * index;
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+                
+                card.innerHTML = `
+                    <img src="${s.image}" class="card-img" alt="${s.title}">
+                    <div class="card-overlay">
+                        <span class="card-num">${s.id}</span>
+                        <h3 class="card-title-sm">${s.title}</h3>
+                    </div>
+                `;
+
+                // Handle click (differentiating from drag)
+                card.addEventListener('click', (e) => {
+                    if (isDragging) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
+                    openOverlay(s);
+                });
+
+                carousel.appendChild(card);
+            });
+        }
+
+        buildCarousel();
+
+        // Rebuild on resize to adjust radius for mobile
+        window.addEventListener('resize', () => {
+            buildCarousel();
+        });
+
+        // ====== DRAG & AUTO-ROTATION LOGIC ======
+        let currentAngle = 0;
+        let targetAngle = 0;
+        let isDragging = false;
+        let startX = 0;
+        let startAngle = 0;
+        let autoRotateSpeed = -0.1; 
+        
+        function animate() {
+            if (!isDragging && !overlay.classList.contains('active')) {
+                // Auto rotate when not dragging or open
+                targetAngle += autoRotateSpeed;
+            }
+            
+            // Smoothly interpolate current angle to target angle
+            currentAngle += (targetAngle - currentAngle) * 0.1;
+            carousel.style.transform = `rotateY(${currentAngle}deg)`;
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate(); // Start loop
+
+        // Touch / Mouse Events for Dragging
+        const scene = document.getElementById('scene');
+
+        function onDragStart(x) {
+            isDragging = false; // Will become true if moved
+            startX = x;
+            startAngle = currentAngle;
+            targetAngle = currentAngle; // Stop momentum immediately
+        }
+
+        function onDragMove(x) {
+            const diffX = x - startX;
+            // If moved more than 5px, consider it a drag
+            if (Math.abs(diffX) > 5) {
+                isDragging = true;
+            }
+            if (isDragging) {
+                targetAngle = startAngle + (diffX * 0.4); 
+            }
+        }
+
+        function onDragEnd() {
+            // setTimeout allows the click event (which fires after mouseup) to check isDragging
+            setTimeout(() => {
+                isDragging = false;
+            }, 50);
+        }
+
+        // Mouse Events
+        scene.addEventListener('mousedown', (e) => onDragStart(e.clientX));
+        window.addEventListener('mousemove', (e) => {
+            if (e.buttons === 1) onDragMove(e.clientX);
+        });
+        window.addEventListener('mouseup', onDragEnd);
+
+        // Touch Events (Mobile)
+        scene.addEventListener('touchstart', (e) => onDragStart(e.touches[0].clientX));
+        window.addEventListener('touchmove', (e) => onDragMove(e.touches[0].clientX));
+        window.addEventListener('touchend', onDragEnd);
+
+
+        // ====== OVERLAY LOGIC ======
+        function openOverlay(data) {
+            document.getElementById('o-img').src = data.image;
+            document.getElementById('o-num').textContent = data.id;
+            document.getElementById('o-title').textContent = data.title;
+            document.getElementById('o-desc').textContent = data.desc;
+            
+            const tagsContainer = document.getElementById('o-tags');
+            tagsContainer.innerHTML = '';
+            data.tags.forEach(tag => {
+                const t = document.createElement('span');
+                t.className = 's-tag';
+                t.textContent = tag;
+                tagsContainer.appendChild(t);
+            });
+
+            overlay.classList.add('active');
+        }
+
+        closeBtn.addEventListener('click', () => {
+            overlay.classList.remove('active');
+        });
+
+    </script>
+</body>
+</html>
